@@ -1,0 +1,34 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/ben/Dev/projects/SDL_Tutorial -B /Users/ben/Dev/projects/SDL_Tutorial/cmake-build-debug
+
+-- CMAKE_BINARY_DIR: /Users/ben/Dev/projects/SDL_Tutorial/cmake-build-debug
+-- CMAKE_SOURCE_DIR: /Users/ben/Dev/projects/SDL_Tutorial
+-- CMAKE_COMMAND: /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake
+-- CMAKE_VERSION: 3.23.2
+-- CMAKE_C_COMPILER: /Library/Developer/CommandLineTools/usr/bin/cc
+-- CMAKE_PROJECT_NAME: SDL_Tutorial
+-- CMAKE_FINDCMAKE: /Users/ben/Dev/projects/SDL_Tutorial/CMAKE
+
+-- SOURCE entry point : src/main.cppsrc/LTexture.cppsrc/LTexture.h
+
+
+-- FINDING SDL2
+-- SDL2_FOUND: TRUE
+-- SDL2_INCLUDE_DIR:/opt/homebrew/include/SDL2
+-- SDL2_LIBRARY: /opt/homebrew/lib/libSDL2main.a/opt/homebrew/lib/libSDL2.dylib-framework Cocoa
+
+-- FINDING SDL2_IMAGE
+-- SDL2_IMAGE_FOUND: TRUE
+-- SDL2_IMAGE_INCLUDE_DIR: /opt/homebrew/include/SDL2
+-- SDL2_IMAGE_LIBRARY: /opt/homebrew/lib/libSDL2_image.dylib
+
+-- FINDING SDL2TTF
+-- SDL2TTF_FOUND: TRUE
+-- SDL2TTF_INCLUDE_DIR: /opt/homebrew/include/SDL2
+-- SDL2TTF_LIBRARY: /opt/homebrew/lib/libSDL2_ttf.dylib/opt/homebrew/lib/libSDL2_ttf.dylib-framework Cocoa
+
+-- FINDING SDL2Mixer
+-- SDL2Mixer_FOUND: TRUE
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/ben/Dev/projects/SDL_Tutorial/cmake-build-debug
