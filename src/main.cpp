@@ -10,6 +10,7 @@ and may not be redistributed without written permission.*/
 #include <sstream>
 #include <unordered_map>
 #include "LTexture.h"
+#include "Renderer.h"
 using namespace std;
 
 struct TileData
@@ -19,16 +20,20 @@ struct TileData
 };
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 860;
+const int SCREEN_HEIGHT = 640;
 
 // Starts up SDL and creates window
 bool init();
 
+// Loads tile csv file
 bool loadTiles();
 
 //Loads media
 bool loadMedia();
+
+// Creates map data
+bool createMap();
 
 //Frees media and shuts down SDL
 void close();
@@ -45,8 +50,11 @@ LTexture gBackgroundTexture;
 // File Data
 unordered_map<string, TileData> tileMap;
 
+// Tile Map
+string map[50][50];
+Renderer renderer;
+
 //Scene sprites
-SDL_Rect gIsometricSpriteClips[ 5 ];
 LTexture gIsometricSpriteSheetTexture;
 
 bool init()
@@ -166,6 +174,19 @@ bool loadMedia()
     return success;
 }
 
+bool createMap()
+{
+    int index = 0;
+    string keys[10] = { "dirt", "grass", "lava", "metal_floor", "wood_floor", "ice", "patchy_grass", "brick_floor", "sand", "tall_grass"};
+    for (auto & row : map) {
+        for (auto & column : row) {
+            column = keys[index % 10];
+            index++;
+        }
+    }
+    return true;
+}
+
 void close()
 {
     //Free loaded image
@@ -192,12 +213,12 @@ int main( int argc, char* args[] )
     }
     else
     {
-        if ( !loadTiles() )
+        if ( !loadTiles() || !createMap() )
         {
             printf( "Failed to load tiles\n" );
         }
-        else {
-
+        else
+        {
             //Load media
             if ( !loadMedia() )
             {
@@ -216,6 +237,9 @@ int main( int argc, char* args[] )
                 Uint8 b = 255;
                 Uint8 a = 255;
 
+                int offsetx = SCREEN_WIDTH / 2;
+                int offsety = -SCREEN_HEIGHT / 2;
+
                 // While application is running
                 while (!quit) {
                     while (SDL_PollEvent(&e) != 0) {
@@ -226,49 +250,24 @@ int main( int argc, char* args[] )
                             //On keypress change rgb values
                         else if (e.type == SDL_KEYDOWN) {
                             switch (e.key.keysym.sym) {
-                                //Increase alpha on r
-                                case SDLK_r:
-                                    if (a + 32 > 255) {
-                                        a = 255;
-                                    } else {
-                                        a += 32;
-                                    }
-                                    break;
-                                case SDLK_f:
-                                    if (a - 32 < 0) {
-                                        a = 0;
-                                    } else {
-                                        a -= 32;
-                                    }
-                                    break;
-                                    //Increase red
-                                case SDLK_q:
-                                    r += 32;
-                                    break;
-
                                     //Increase green
                                 case SDLK_w:
-                                    g += 32;
-                                    break;
-
-                                    //Increase blue
-                                case SDLK_e:
-                                    b += 32;
+                                    offsety += 10;
                                     break;
 
                                     //Decrease red
                                 case SDLK_a:
-                                    r -= 32;
+                                    offsetx += 10;
                                     break;
 
                                     //Decrease green
                                 case SDLK_s:
-                                    g -= 32;
+                                    offsety -= 10;
                                     break;
 
                                     //Decrease blue
                                 case SDLK_d:
-                                    b -= 32;
+                                    offsetx -= 10;
                                     break;
                             }
                         }
@@ -279,28 +278,16 @@ int main( int argc, char* args[] )
                     SDL_RenderClear(gRenderer);
 
                     //Render background texture to screen
-                    gBackgroundTexture.setColor(r, g, b);
                     gBackgroundTexture.render(gRenderer, 0, 0);
 
-                    //Render top left sprite
-                    TileData dirt = tileMap["wood_floor"];
-                    gIsometricSpriteSheetTexture.render(gRenderer, 3, 3, &dirt.dimensions);
-
-                    //Render top right sprite
-                    TileData tallGrass = tileMap["tall_grass"];
-                    gIsometricSpriteSheetTexture.render(gRenderer, SCREEN_WIDTH - tallGrass.dimensions.w - 3, 3,
-                                                        &tallGrass.dimensions);
-
-                    //Render bottom left sprite
-                    TileData lava = tileMap["lava"];
-                    gIsometricSpriteSheetTexture.render(gRenderer, 3, SCREEN_HEIGHT - lava.dimensions.h - 3,
-                                                        &lava.dimensions);
-
-                    //Render bottom right sprite
-                    TileData rock = tileMap["rock"];
-                    gIsometricSpriteSheetTexture.render(gRenderer, SCREEN_WIDTH - rock.dimensions.w - 3,
-                                                        SCREEN_HEIGHT - rock.dimensions.h - 3, &rock.dimensions);
-
+                    //Render isometric ground from
+                    for (int row = 0; row < 50; row++) {
+                        for (int column = 0; column < 50; column++) {
+                            Point renderPosition = renderer.mapToScreen({ row, column }, 32, 16 );
+                            TileData tile = tileMap[map[row][column]];
+                            gIsometricSpriteSheetTexture.render(gRenderer, renderPosition.x + offsetx, renderPosition.y + offsety,&tile.dimensions);
+                        }
+                    }
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);
