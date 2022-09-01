@@ -141,8 +141,8 @@ bool loadTiles()
         }
 
         // if formatted correctly, add to the map
-        if (outputs.size() > 2) {
-            tileMap[outputs[0]] = {outputs[0], stoi(outputs[1]), stoi(outputs[2]), 32, 32};
+        if (outputs.size() > 4) {
+            tileMap[outputs[0]] = {outputs[0], stoi(outputs[1]), stoi(outputs[2]), stoi(outputs[3]), stoi(outputs[4])};
         }
     }
 
@@ -288,6 +288,14 @@ int main( int argc, char* args[] )
                             gIsometricSpriteSheetTexture.render(gRenderer, renderPosition.x + offsetx, renderPosition.y + offsety,&tile.dimensions);
                         }
                     }
+
+                    Point columnRenderPosition = renderer.mapToScreen({ 11, 11}, 32, 16);
+                    TileData tile = tileMap["column"];
+                    gIsometricSpriteSheetTexture.render(gRenderer, columnRenderPosition.x + offsetx, columnRenderPosition.y + offsety - (tile.dimensions.h - 24),&tile.dimensions);
+
+                    Point stackPosition = renderer.mapToScreen({ 11, 13}, 32, 16);
+                    TileData stackTile = tileMap["ice"];
+                    gIsometricSpriteSheetTexture.render(gRenderer, stackPosition.x + offsetx, stackPosition.y + offsety - (stackTile.dimensions.h - 24),&stackTile.dimensions);
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);
