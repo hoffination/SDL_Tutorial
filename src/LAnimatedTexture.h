@@ -19,7 +19,7 @@ public:
 
     void load( SDL_Renderer* renderer );
 
-    void render( SDL_Renderer* renderer, int x, int y );
+    void render( SDL_Renderer* renderer, int x, int y, Uint32 currentTicks );
 
     int getWidth();
     int getHeight();
@@ -28,6 +28,7 @@ private:
     int frameCount, currentFrame, w, h, renderW, renderH;
     LTexture gTexture;
     SDL_Rect *gSpriteClips = NULL;
+    float lastUpdate;
 };
 
 

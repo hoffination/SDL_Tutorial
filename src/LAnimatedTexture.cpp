@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include "LAnimatedTexture.h"
 
+const float ANIMATED_FPS = 10.0f;
+
 LAnimatedTexture::LAnimatedTexture(std::string path, int frameCount, int w, int h, int renderW, int renderH) {
     this->filename = path;
     this->frameCount = frameCount;
@@ -35,10 +37,16 @@ void LAnimatedTexture::load(SDL_Renderer* renderer) {
     }
 }
 
-void LAnimatedTexture::render(SDL_Renderer* renderer, int x, int y ) {
+void LAnimatedTexture::render(SDL_Renderer* renderer, int x, int y, Uint32 currentTicks ) {
     SDL_Rect* currentClip = &gSpriteClips[currentFrame];
     gTexture.render( renderer, x, y, renderW, renderH, currentClip );
-    currentFrame = (currentFrame + 1) % frameCount;
+
+    float dt = (currentTicks - lastUpdate) / 1000.0f;
+    int framesToUpdate = floor(dt / (1.0f / ANIMATED_FPS));
+    if (framesToUpdate > 0) {
+        lastUpdate = currentTicks;
+        currentFrame = (currentFrame + 1) % frameCount;
+    }
 }
 
 int LAnimatedTexture::getHeight() {

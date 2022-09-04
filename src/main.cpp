@@ -248,6 +248,7 @@ int main( int argc, char* args[] )
 
                 // While application is running
                 while (!quit) {
+                    Uint32 current = SDL_GetTicks();
 
                     while (SDL_PollEvent(&e) != 0) {
                         // User requests quit
@@ -311,8 +312,13 @@ int main( int argc, char* args[] )
                     TileData stackTile = tileMap["ice"];
                     gIsometricSpriteSheetTexture.render(gRenderer, stackPosition.x + offsetx, stackPosition.y + offsety - (stackTile.dimensions.h - 24),&stackTile.dimensions);
 
+
+                    Point treePosition = renderer.mapToScreen({ 13, 11}, 32, 16);
+                    TileData treeTile = tileMap["tree"];
+                    gIsometricSpriteSheetTexture.render(gRenderer, treePosition.x + offsetx, treePosition.y + offsety - (treeTile.dimensions.h - 24),&treeTile.dimensions);
+
                     Point firePosition = renderer.mapToScreen({ 11, 13}, 32, 16);
-                    gAnimatedFire->render(gRenderer, firePosition.x + offsetx, firePosition.y + offsety - ( gAnimatedFire->getHeight() - 24 ) );
+                    gAnimatedFire->render(gRenderer, firePosition.x + offsetx, firePosition.y + offsety - ( gAnimatedFire->getHeight() - 24 ), current );
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);

@@ -36,3 +36,4 @@ thin_column,128,224,32,32
 thin_row,0,256,32,32
 column,0,288,32,64
 column_broken,32,288,32,64
+tree,64,288,32,64
