@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "LTexture.h"
+#include "LAnimationSheet.h"
 
 #ifndef SDL_TUTORIAL_LANIMATEDTEXTURE_H
 #define SDL_TUTORIAL_LANIMATEDTEXTURE_H
@@ -13,7 +14,8 @@
 class LAnimatedTexture {
 public:
     //Initializes variables
-    LAnimatedTexture( std::string path, int frameCount, int w, int h, int renderW, int renderH );
+    LAnimatedTexture( std::string path, int frameCount, int w, int h, int renderW, int renderH, int fps );
+    explicit LAnimatedTexture( const AnimationSheet& sheet );
 
     //Deallocates Memory
     ~LAnimatedTexture();
@@ -28,7 +30,7 @@ public:
     int getWidth();
 private:
     std::string filename;
-    int frameCount, currentFrame, w, h, renderW, renderH;
+    int frameCount, currentFrame, w, h, renderW, renderH, fps;
     LTexture gTexture;
     std::vector<SDL_Rect> gSpriteClips;
     float lastUpdate;

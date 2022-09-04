@@ -128,7 +128,7 @@ bool loadTiles()
         return false;
     }
 
-    string line, colname, val;
+    string line, val;
     if( tilesFile.good() )
     {
         // Read first line in the file
@@ -176,7 +176,7 @@ bool loadMedia()
         success = false;
     }
 
-    gAnimatedFire = new LAnimatedTexture( "resources/fire_full_sheet.png", 6, 19, 53, 32, 90 );
+    gAnimatedFire = new LAnimatedTexture( "resources/fire_full_sheet.png", 6, 19, 53, 32, 90, 10 );
 //    gAnimatedFire = new LAnimatedTexture( "resources/fire_medium_sheet.png", 6, 45, 90, 32, 64 );
 //    gAnimatedFire = new LAnimatedTexture( "resources/fire_column_medium_sheet.png", 12, 45, 90, 32, 64 );
     gAnimatedFire->load(gRenderer);
@@ -184,8 +184,10 @@ bool loadMedia()
 //    gGoblin = new LCharacter( "resources/characters/goblin/idle-down.png" );
 //    gGoblin->load(gRenderer, 10, 136, 204, 32, 48);
 
-    gGoblin = new LCharacter( "resources/characters/crusader/idle_down.png", "resources/characters/crusader/walk_down.png", { 15.0f, 15.0f } );
-    gGoblin->load(gRenderer, {16, 117, 158, 32, 43}, {15, 112, 161, 32, 46});
+    std::vector<AnimationSheet> sheets = LCharacter::parseAnimations("resources/characters/crusader/animations.csv");
+    gGoblin = new LCharacter( { 15.0f, 15.0f } );
+    gGoblin->load(gRenderer, sheets);
+    gGoblin->setDestination({ 15, 25 });
 
     return success;
 }
@@ -276,6 +278,7 @@ int main( int argc, char* args[] )
                                     Point renderPosition = Renderer::screenToMap({ e.button.x - offsetx, e.button.y - offsety } );
                                     map[renderPosition.x][renderPosition.y] = "grass";
                                     printf("click x(%d) y(%d)\n", renderPosition.x, renderPosition.y);
+                                    gGoblin->setDestination({ (float)renderPosition.x, (float)renderPosition.y });
                                     break;
                             }
                         }

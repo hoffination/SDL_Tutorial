@@ -5,9 +5,7 @@
 #include <SDL.h>
 #include "LAnimatedTexture.h"
 
-const float ANIMATED_FPS = 10.0f;
-
-LAnimatedTexture::LAnimatedTexture(std::string path, int frameCount, int w, int h, int renderW, int renderH) {
+LAnimatedTexture::LAnimatedTexture(std::string path, int frameCount, int w, int h, int renderW, int renderH, int fps) {
     this->filename = path;
     this->frameCount = frameCount;
     this->currentFrame = 0;
@@ -15,6 +13,18 @@ LAnimatedTexture::LAnimatedTexture(std::string path, int frameCount, int w, int 
     this->h = h;
     this->renderW = renderW;
     this->renderH = renderH;
+    this->fps = fps;
+}
+
+LAnimatedTexture::LAnimatedTexture(const AnimationSheet& sheet) {
+    this->filename = sheet.filepath;
+    this->frameCount = sheet.frameCount;
+    this->currentFrame = 0;
+    this->w = sheet.w;
+    this->h = sheet.h;
+    this->renderW = sheet.renderW;
+    this->renderH = sheet.renderH;
+    this->fps = sheet.fps;
 }
 
 LAnimatedTexture::~LAnimatedTexture() {
@@ -36,7 +46,7 @@ void LAnimatedTexture::render(SDL_Renderer* renderer, int x, int y, Uint32 curre
     gTexture.render( renderer, x, y, renderW, renderH, currentClip );
 
     float dt = (currentTicks - lastUpdate) / 1000.0f;
-    int framesToUpdate = floor(dt / (1.0f / ANIMATED_FPS));
+    int framesToUpdate = floor(dt / (1.0f / fps));
     if (framesToUpdate > 0) {
         lastUpdate = currentTicks;
         currentFrame = (currentFrame + 1) % frameCount;

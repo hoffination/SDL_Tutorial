@@ -1,0 +1,9 @@
+filename,frame count,w,h,renderW,renderH,fps
+resources/characters/crusader/idle-down-left.png,16,117,158,32,43,20
+resources/characters/crusader/idle-down-right.png,16,81,158,32,62,20
+resources/characters/crusader/idle-up-right.png,16,117,148,32,40,20
+resources/characters/crusader/idle-up-left.png,16,81,148,32,58,20
+resources/characters/crusader/walk_down_left.png,15,112,161,32,46,24
+resources/characters/crusader/walk-down-right.png,15,90,159,32,57,24
+resources/characters/crusader/walk-up-right.png,15,112,149,32,43,24
+resources/characters/crusader/walk-up-left.png,15,90,150,32,53,24
