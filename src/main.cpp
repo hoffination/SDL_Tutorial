@@ -11,13 +11,14 @@ and may not be redistributed without written permission.*/
 #include <unordered_map>
 #include "LTexture.h"
 #include "LAnimatedTexture.h"
+#include "LCharacter.h"
 #include "Renderer.h"
 using namespace std;
 
 struct TileData
 {
     string name;
-    SDL_Rect dimensions;
+    SDL_Rect dimensions{};
 };
 
 //Screen dimension constants
@@ -59,6 +60,9 @@ LTexture gIsometricSpriteSheetTexture;
 
 //Scene fire
 LAnimatedTexture* gAnimatedFire = NULL;
+
+//Character
+LCharacter* gGoblin = NULL;
 
 string keys[10] = { "dirt", "grass", "lava", "metal_floor", "wood_floor", "ice", "patchy_grass", "brick_floor", "sand", "tall_grass"};
 
@@ -177,6 +181,12 @@ bool loadMedia()
 //    gAnimatedFire = new LAnimatedTexture( "resources/fire_column_medium_sheet.png", 12, 45, 90, 32, 64 );
     gAnimatedFire->load(gRenderer);
 
+//    gGoblin = new LCharacter( "resources/characters/goblin/idle-down.png" );
+//    gGoblin->load(gRenderer, 10, 136, 204, 32, 48);
+
+    gGoblin = new LCharacter( "resources/characters/crusader/idle_down.png", "resources/characters/crusader/walk_down.png", { 15.0f, 15.0f } );
+    gGoblin->load(gRenderer, {16, 117, 158, 32, 43}, {15, 112, 161, 32, 46});
+
     return success;
 }
 
@@ -198,7 +208,10 @@ void close()
     //Free loaded image
     gBackgroundTexture.free();
     gIsometricSpriteSheetTexture.free();
-    delete gAnimatedFire;
+    gAnimatedFire->free();
+    gAnimatedFire = NULL;
+    gGoblin->free();
+    gGoblin = NULL;
 
     //Destroy window
     SDL_DestroyRenderer( gRenderer );
@@ -260,7 +273,7 @@ int main( int argc, char* args[] )
                             switch (e.button.button) {
                                 case SDL_BUTTON_LEFT:
                                     printf("left button click\n");
-                                    Point renderPosition = Renderer::screenToMap({ e.button.x - offsetx, e.button.y - offsety }, 32, 16 );
+                                    Point renderPosition = Renderer::screenToMap({ e.button.x - offsetx, e.button.y - offsety } );
                                     map[renderPosition.x][renderPosition.y] = "grass";
                                     printf("click x(%d) y(%d)\n", renderPosition.x, renderPosition.y);
                                     break;
@@ -305,7 +318,7 @@ int main( int argc, char* args[] )
                     //Render isometric ground from
                     for (int row = 0; row < 50; row++) {
                         for (int column = 0; column < 50; column++) {
-                            Point renderPosition = Renderer::mapToScreen({ row, column }, 32, 16 );
+                            Point renderPosition = Renderer::mapToScreen({ row, column } );
                             TileData tile = tileMap[map[row][column]];
                             SDL_Rect renderSpace = { renderPosition.x + offsetx,renderPosition.y + offsety, tile.dimensions.w, tile.dimensions.h };
                             //Cull rendering off-screen items
@@ -315,21 +328,23 @@ int main( int argc, char* args[] )
                         }
                     }
 
-                    Point columnRenderPosition = Renderer::mapToScreen({ 11, 11}, 32, 16);
+                    Point columnRenderPosition = Renderer::mapToScreen({ 11, 11});
                     TileData tile = tileMap["column"];
                     gIsometricSpriteSheetTexture.render(gRenderer, columnRenderPosition.x + offsetx, columnRenderPosition.y + offsety - (tile.dimensions.h - 24),&tile.dimensions);
 
-                    Point stackPosition = Renderer::mapToScreen({ 11, 13}, 32, 16);
+                    Point stackPosition = Renderer::mapToScreen({ 11, 13});
                     TileData stackTile = tileMap["ice"];
                     gIsometricSpriteSheetTexture.render(gRenderer, stackPosition.x + offsetx, stackPosition.y + offsety - (stackTile.dimensions.h - 24),&stackTile.dimensions);
 
 
-                    Point treePosition = Renderer::mapToScreen({ 13, 11}, 32, 16);
+                    Point treePosition = Renderer::mapToScreen({ 13, 11});
                     TileData treeTile = tileMap["tree"];
                     gIsometricSpriteSheetTexture.render(gRenderer, treePosition.x + offsetx, treePosition.y + offsety - (treeTile.dimensions.h - 24),&treeTile.dimensions);
 
-                    Point firePosition = Renderer::mapToScreen({ 11, 13}, 32, 16);
+                    Point firePosition = Renderer::mapToScreen({ 11, 13});
                     gAnimatedFire->render(gRenderer, firePosition.x + offsetx, firePosition.y + offsety - ( gAnimatedFire->getHeight() - 24 ), current );
+
+                    gGoblin->render(gRenderer, offsetx, offsety, current);
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);

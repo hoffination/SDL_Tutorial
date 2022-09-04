@@ -3,6 +3,7 @@
 //
 #include <SDL.h>
 #include <string>
+#include <vector>
 #include "LTexture.h"
 
 #ifndef SDL_TUTORIAL_LANIMATEDTEXTURE_H
@@ -21,13 +22,15 @@ public:
 
     void render( SDL_Renderer* renderer, int x, int y, Uint32 currentTicks );
 
-    int getWidth();
+    void free();
+
     int getHeight();
+    int getWidth();
 private:
     std::string filename;
     int frameCount, currentFrame, w, h, renderW, renderH;
     LTexture gTexture;
-    SDL_Rect *gSpriteClips = NULL;
+    std::vector<SDL_Rect> gSpriteClips;
     float lastUpdate;
 };
 

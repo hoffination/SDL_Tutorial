@@ -10,10 +10,20 @@ struct Point {
     int y;
 };
 
+struct PointF {
+    float x;
+    float y;
+};
+
+const int TILE_WIDTH = 32;
+const int TILE_HEIGHT = 16;
+
 class Renderer {
 public:
-    static Point mapToScreen(Point mapCoordinate, int tileWidth, int tileHeight);
-    static Point screenToMap(Point screenCoordinate, int tileWidth, int tileHeight);
+    static Point mapToScreen(Point mapCoordinate);
+    static Point mapToScreenF(PointF mapCoordinate);
+
+    static Point screenToMap(Point screenCoordinate);
 };
 
 

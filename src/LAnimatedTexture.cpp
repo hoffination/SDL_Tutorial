@@ -15,25 +15,19 @@ LAnimatedTexture::LAnimatedTexture(std::string path, int frameCount, int w, int 
     this->h = h;
     this->renderW = renderW;
     this->renderH = renderH;
-    this->gSpriteClips = new SDL_Rect[frameCount];
 }
 
 LAnimatedTexture::~LAnimatedTexture() {
-    gTexture.free();
-    delete [] gSpriteClips;
+    free();
 }
 
 void LAnimatedTexture::load(SDL_Renderer* renderer) {
     // Load file based on saved filename
     gTexture.loadFromFile( filename, renderer );
 
-    if (!gSpriteClips) {
-        return;
-    }
-
     //Initialize all clips from the texture
     for (int frame = 0; frame < this->frameCount; ++frame) {
-        gSpriteClips[frame] = { w * frame, 0, w, h };
+        gSpriteClips.push_back({ w * frame, 0, w, h });
     }
 }
 
@@ -47,6 +41,11 @@ void LAnimatedTexture::render(SDL_Renderer* renderer, int x, int y, Uint32 curre
         lastUpdate = currentTicks;
         currentFrame = (currentFrame + 1) % frameCount;
     }
+}
+
+void LAnimatedTexture::free() {
+    gTexture.free();
+    gSpriteClips.clear();
 }
 
 int LAnimatedTexture::getHeight() {
