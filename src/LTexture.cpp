@@ -99,6 +99,12 @@ void LTexture::render(SDL_Renderer *gRenderer, int x, int y, SDL_Rect* clip) {
     SDL_RenderCopy( gRenderer, mTexture, clip, &renderQuad );
 }
 
+void LTexture::render(SDL_Renderer *gRenderer, int x, int y, int w, int h, SDL_Rect* clip) {
+    //Set rendering space and render to screen
+    SDL_Rect renderQuad = { x, y, w, h };
+    SDL_RenderCopy( gRenderer, mTexture, clip, &renderQuad );
+}
+
 int LTexture::getWidth() {
     return mWidth;
 }

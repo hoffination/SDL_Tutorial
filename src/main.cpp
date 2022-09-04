@@ -10,6 +10,7 @@ and may not be redistributed without written permission.*/
 #include <sstream>
 #include <unordered_map>
 #include "LTexture.h"
+#include "LAnimatedTexture.h"
 #include "Renderer.h"
 using namespace std;
 
@@ -56,6 +57,9 @@ Renderer renderer;
 
 //Scene sprites
 LTexture gIsometricSpriteSheetTexture;
+
+//Scene fire
+LAnimatedTexture* gAnimatedFire = NULL;
 
 bool init()
 {
@@ -166,10 +170,11 @@ bool loadMedia()
         printf( "Failed to load isometric tiles!\n" );
         success = false;
     }
-    else
-    {
-        printf("load good\n");
-    }
+
+    gAnimatedFire = new LAnimatedTexture( "resources/fire_full_sheet.png", 6, 19, 53, 32, 90 );
+//    gAnimatedFire = new LAnimatedTexture( "resources/fire_medium_sheet.png", 6, 45, 90, 32, 64 );
+//    gAnimatedFire = new LAnimatedTexture( "resources/fire_column_medium_sheet.png", 12, 45, 90, 32, 64 );
+    gAnimatedFire->load(gRenderer);
 
     return success;
 }
@@ -192,6 +197,7 @@ void close()
     //Free loaded image
     gBackgroundTexture.free();
     gIsometricSpriteSheetTexture.free();
+    delete gAnimatedFire;
 
     //Destroy window
     SDL_DestroyRenderer( gRenderer );
@@ -242,6 +248,7 @@ int main( int argc, char* args[] )
 
                 // While application is running
                 while (!quit) {
+
                     while (SDL_PollEvent(&e) != 0) {
                         // User requests quit
                         if (e.type == SDL_QUIT) {
@@ -280,12 +287,19 @@ int main( int argc, char* args[] )
                     //Render background texture to screen
                     gBackgroundTexture.render(gRenderer, 0, 0);
 
+                    //Viewport to use for culling
+                    SDL_Rect viewport = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+
                     //Render isometric ground from
                     for (int row = 0; row < 50; row++) {
                         for (int column = 0; column < 50; column++) {
                             Point renderPosition = renderer.mapToScreen({ row, column }, 32, 16 );
                             TileData tile = tileMap[map[row][column]];
-                            gIsometricSpriteSheetTexture.render(gRenderer, renderPosition.x + offsetx, renderPosition.y + offsety,&tile.dimensions);
+                            SDL_Rect renderSpace = { renderPosition.x + offsetx,renderPosition.y + offsety, tile.dimensions.w, tile.dimensions.h };
+                            //Cull rendering off-screen items
+                            if (SDL_HasIntersection(&viewport, &renderSpace)) {
+                                gIsometricSpriteSheetTexture.render(gRenderer, renderPosition.x + offsetx, renderPosition.y + offsety, &tile.dimensions);
+                            }
                         }
                     }
 
@@ -296,6 +310,9 @@ int main( int argc, char* args[] )
                     Point stackPosition = renderer.mapToScreen({ 11, 13}, 32, 16);
                     TileData stackTile = tileMap["ice"];
                     gIsometricSpriteSheetTexture.render(gRenderer, stackPosition.x + offsetx, stackPosition.y + offsety - (stackTile.dimensions.h - 24),&stackTile.dimensions);
+
+                    Point firePosition = renderer.mapToScreen({ 11, 13}, 32, 16);
+                    gAnimatedFire->render(gRenderer, firePosition.x + offsetx, firePosition.y + offsety - ( gAnimatedFire->getHeight() - 24 ) );
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);

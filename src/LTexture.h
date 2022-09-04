@@ -34,6 +34,9 @@ public:
     //Renders texture at given point
     void render( SDL_Renderer* gRenderer, int x, int y, SDL_Rect* clip = NULL );
 
+    //Renders at a point with scaling
+    void render( SDL_Renderer* gRenderer, int x, int y, int w, int h, SDL_Rect* clip = NULL );
+
     //Gets image dimensions
     int getWidth();
     int getHeight();
