@@ -13,6 +13,7 @@ struct Point {
 class Renderer {
 public:
     static Point mapToScreen(Point mapCoordinate, int tileWidth, int tileHeight);
+    static Point screenToMap(Point screenCoordinate, int tileWidth, int tileHeight);
 };
 
 
